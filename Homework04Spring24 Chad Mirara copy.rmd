@@ -1,0 +1,181 @@
+---
+title: "Homework #4"
+author: "Chad Mirara"
+date: "Feb 29th, 2024"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+```{r}
+library(tidyverse)
+library(ggfortify)
+library(ggplot2)
+library(emmeans)
+library(GGally)
+library(lindia)
+```
+
+## Problem 1
+
+A study was conducted to assess the effect of a new treatment on oxygen saturation around the shunt site in pediatric hydrocephalus patients. Subjects were randomly assigned to receive the new treatment or a standard treatment (8 subjects in the standard treatment group and 6 subjects in the new treatment group).  Then oxygen saturation measurements are taken weekly in 4 weeks following the treatment. The data are in oxy_repeated_measures.csv.
+
+### Read Data
+
+```{r}
+df1 <- read.csv("oxy.csv")
+glimpse(df1)
+```
+
+### Part 1
+
+Identify the following design elements in this study: the experimental units, the response variable(s), the factor, factor levels, the treatments. What did the experimenters do to control variability?
+
+- Experimental Units: **The experimental units are the shunt sites in pediatric hydrocephalus patients for which the oxy amounts are being measured for** 
+
+- Response Variable: **The Response Variable is the Oxygen saturation** 
+
+- Factors: **The factors are the treatment** 
+
+- Factor Levels: **There are 2 factor levels (new treatment or standard treatment** 
+
+- Treatments: **New Treatment and Standard Treatment** 
+
+- What did the experimenters do to control variability? **Collected data over a period of 4 weeks** 
+
+### Part 2
+
+What type of analysis makes the most sense for this study design? How do the factors in this study fit into this design? Justify your choice.
+
+**A profile plot is best for this design, it explores the effect of treatment on the oxygen saturation amount for the shunt sites in pediatric hydrocephalus patients**  
+
+### Part 3
+
+
+Please add meaningful labels to the factor levels and convert any variables to factors if needed.
+
+```{r}
+df11 <- df1 %>%
+  mutate(Treatment = as.factor(Treatment),
+         Subject=as.factor(Subject),
+         Week=as.factor(Week))
+glimpse(df11)
+```
+
+### Part 4
+
+(EDA) Create an appropriate plot for visualizing this data set. You must use meaningful labels in this plot. Describe your observations based on the plot. 
+
+```{r}
+ggplot(df11) +
+  geom_line(aes(x=Week, y=Oxy, color=Treatment, group=Subject)) +
+  geom_point(aes(x=Week, y=Oxy, color=Treatment, group=Subject)) +
+  labs(x="Week",y="Oxy Saturation Amount")
+```
+
+**Sites with the new treatment have higher levels of Oxygen saturation than sites with the standard treatment** 
+
+### Part 5
+
+Fit the appropriate model for this study. Explain your results, citing the test statistic(s), degrees of freedom, and the p-value(s). What are your conclusions in the context of the problem?
+
+```{r}
+oxy.m1 <- aov(Oxy ~ Treatment*Week + Error(Subject/Week), data=df11)
+summary(oxy.m1)
+```
+
+
+**Treatment type (by itself) is a significant variable, with its p-value of 0.0366 and F-Stat of 5.529, Week is not significant, and Treatment Paired with Week is not significant** 
+
+### Part 6
+
+If necessary, perform multiple comparisons and explain the results. If multiple comparisons are not necessary, explain why. 
+
+
+```{r}
+
+
+```
+
+**Multiple Comparison tests are not necessary, as there are only 2 levels in treatment, only paving the way for 1 comparison,  not multiple** 
+
+## Problem 2
+
+**Description**: A soft drink company manager is interested in predicting the amount of time required by the route driver to service the vending machines in an outlet.  The industrial engineer responsible for the study has suggested that the two most important variables affecting the Delivery Time (DeliveryTime) are the Number of Cases of product stocked (Cases) and the Distance walked by the route driver (Distance).  The engineer has collected 25 observations on delivery time, which are shown in the Drink Data.  
+Note: Distance is measured in feet.  Delivery time is measured in minutes. 
+
+### Part 1
+
+Read in the data and remove any columns from the data set that are not needed for the model.
+
+```{r}
+Drink <- read.csv("Drink.csv")
+glimpse(Drink)
+
+
+
+```
+
+### Part 2
+
+Construct a scatterplot matrix of all variables. Describe any discernible patterns you see.
+
+```{r}
+ggpairs(Drink, columns=c(3:4,2) )
+```
+
+**Delivery Time and Cases have a strong correlation, which makes sense, as do Delivery Time and Distance, Distance and Cases, it is pretty self epxlanatory that the route driver would prioritize longer trips when more cases are being shipped out** 
+
+### Part 3
+
+Fit the multiple regression modeling Delivery time as a function of the Cases and Distance. Perform a residual analysis of the fitted model. Do you see any concerns regarding the assumptions we make in linear regression?
+
+```{r}
+Drink.fit <- lm(DeliveryTime ~ Cases + Distance, data=Drink)
+summary(Drink.fit)
+
+```
+
+
+**I don't see any concerns** 
+
+### Part 4
+
+Construct a Box-Cox transformation plot to the fitted model in Part 4. Does the plot recommend any transformation on the response variable?
+
+```{r}
+gg_boxcox(Drink.fit)
+```
+
+**The Box-Cox Transformation Plot does recommend a transformation for the response variable, I am going to implement a transformation of 1/2 or its sqrt equivalent** 
+
+### Part 5
+
+Refit the multiple regression modeling Delivery time as a function of the Cases and Distance based on the transformation suggested in Part 4. Perform a residual analysis of the fitted model. Do you see any concerns regarding the assumptions we make in linear regression?
+
+```{r}
+Drinkfit2 <- lm(DeliveryTime^(1/2) ~ Cases + Distance, data=Drink)
+autoplot(Drinkfit2)
+```
+
+**The plots display Normality and Linearity** 
+
+### Part 6 and Part 7
+
+Interpret the intercept term for the fitted model from part 5. Does it contextually make any sense? Interpret the slope coefficients for the fitted model from part 5.
+
+```{r}
+summary(Drinkfit2)
+
+```
+
+**It makes sense, for every half unit increase in Cases, the Delivery Time increases by 0.14 minutes, for every half unit increase in Distance, the Delivery Time increases by 0.001 minutes.** 
+
+### Part 8
+
+Interpret the residual standard error and $R^2$ of the multiple regression model in part 5.
+
+**The residual Standard Error is 0.2732, the adjusted R-Squared means 95.96% of the data is within the error threshold** 
+
