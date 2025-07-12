@@ -1,0 +1,31 @@
+Seam_Type,Sewing_Speed,Replicate,Seam_Strength
+Flat-Felled Seam,Very Low,1,25
+Flat-Felled Seam,Very Low,2,28
+Flat-Felled Seam,Very Low,3,24
+Flat-Felled Seam,Low,1,32
+Flat-Felled Seam,Low,2,30
+Flat-Felled Seam,Low,3,35
+Flat-Felled Seam,Medium,1,57
+Flat-Felled Seam,Medium,2,53
+Flat-Felled Seam,Medium,3,54
+Flat-Felled Seam,High,1,69
+Flat-Felled Seam,High,2,66
+Flat-Felled Seam,High,3,73
+Flat-Felled Seam,Very High,1,82
+Flat-Felled Seam,Very High,2,80
+Flat-Felled Seam,Very High,3,87
+French Seam,Very Low,1,31
+French Seam,Very Low,2,26
+French Seam,Very Low,3,33
+French Seam,Low,1,33
+French Seam,Low,2,31
+French Seam,Low,3,39
+French Seam,Medium,1,45
+French Seam,Medium,2,42
+French Seam,Medium,3,47
+French Seam,High,1,58
+French Seam,High,2,55
+French Seam,High,3,60
+French Seam,Very High,1,75
+French Seam,Very High,2,68
+French Seam,Very High,3,69
